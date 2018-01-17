@@ -1,0 +1,172 @@
+一、安装jdk
+	去Oracle官网下载JAVA SE Linux版本SDK----------jdk-8u131-linux-x64.tar.gz
+	将其通过xftp传输到/usr/local目录下
+	解压---------- tar -zxvf jdk-8u131-linux-x64.tar.gz
+	解压之后 /usr/local 目录下会多出一个文件夹 jdk1.8.0_131
+	然后配置环境变量
+	vi /etc/profile
+	G---到末行
+	i---进入编辑状态
+	开始编辑
+	export JAVA_HOME=/usr/local/jdk1.8.0_131
+	export JRE_HOME=$JAVA_HOME/jre
+	export PATH=$JAVA_HOME/bin:$PATH
+	export CLASSPATH=./:JAVA_HOME/lib:$JRE_HOME/lib
+	结束编辑
+	Esc(退出编辑)---:wq!(保存并退出)----shutdown -r now(重启系统)
+	java -version
+	如果出现以下版本信息说明jdk已经安装成功
+	[root@iz2ze8rwgdi66yyg99hikwz ~]# java -version
+	java version "1.8.0_131"
+	Java(TM) SE Runtime Environment (build 1.8.0_131-b11)
+	Java HotSpot(TM) 64-Bit Server VM (build 25.131-b11, mixed mode)
+二、安装Tomcat
+	去Apache官网下载Tomcat Linux版本----------apache-tomcat-7.0.78.tar.gz
+	将其通过xftp传输到/usr/local目录下
+	解压---------- tar -zxvf apache-tomcat-7.0.78.tar.gz
+	到阿里控制台找到该服务器实例然后配置安全组规则开放8080端口
+	重启服务器-------shutdown -r now
+	启动tomcat-------./startup.sh
+	到web端访问tomcat首页，如果出现tomcat首页则说明安装tomcat成功
+	查看tomcat日志  
+	     cd /usr/local/apache-tomcat-7.0.78/logs
+	     tail -f catalina.out
+三、安装mysql(https://jingyan.baidu.com/article/63acb44acba05561fcc17e81.html)
+	1.将mysql安装包（mysql-5.6.33-linux-glibc2.5-x86_64.tar.gz）通过xftp传输到/usr/local目录下   
+	2.解压 tar axvf mysql-5.6.33-linux-glibc2.5-x86_64.tar.gz,解压出来后/usr/local目录下新增了一个文件夹---mysql-5.6.33-linux-glibc2.5-x86_64
+	3.将解压后的文件复制到/usr/local/mysql目录下-----cp mysql-5.6.33-linux-glibc2.5-x86_64 /usr/local/mysql -r
+	4.进入/usr/local/mysql目录下
+	5.添加mysql组
+	  groupadd mysql
+	6.添加mysql用户 
+	  useradd -r -g mysql mysql
+	7.修改当前目录拥有者为mysql用户
+	  chown -R mysql:mysql ./
+	8.安装数据库，运行
+	  ./scripts/mysql_install_db --user=mysql
+	9.执行第八条命令会遇到错误Installing MySQL system tables..../bin/mysqld: error while loading shared libraries: libaio.so.1: cannot open shared object file: No such file or directory
+	10.yum install libaio* -y     执行该命令能解决以上遇到的问题
+	11.修改当前目录拥有者为root用户，运行
+	   chown -R root:root ./
+	12.修改当前data目录拥有者为mysql用户，运行
+	   chown -R mysql:mysql data
+	13.添加开机启动，运行
+	   cp support-files/mysql.server /etc/init.d/mysql
+	14.第13条命令会出现右侧提示,直接回车就好--------------cp: overwrite ‘/etc/init.d/mysql’?
+	15.service mysql start
+		出现以下信息则表示数据控启动成功
+		Starting MySQL.                                            [  OK  ]
+四、登录mysql
+	1. 将mysql命令配置到系统路径中，相当于windows系统配置环境变量
+		ln -s /usr/local/mysql/bin/mysql /usr/bin
+	2.登录
+	    mysql -u root -p
+	3.因为初始密码为空,所以直接回车就会成功登录
+	   报错  ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/tmp/mysql.sock' 
+	4.停掉mysql服务并且编辑配置文件
+		[root@iz2ze8rwgdi66yyg99hikwz ~]# service mysql stop
+        Shutting down MySQL..                                      [  OK  ]
+
+
+		[root@iz2ze8rwgdi66yyg99hikwz ~]# cat /etc/my.cnf
+		[mysqld]
+		datadir=/usr/local/mysql/data
+		socket=/var/lib/mysql/mysql.sock
+		# Disabling symbolic-links is recommended to prevent assorted security risks
+		symbolic-links=0
+		# Settings user and group are ignored when systemd is used.
+		# If you need to run mysqld under a different user or group,
+		# customize your systemd unit file for mariadb according to the
+		# instructions in http://fedoraproject.org/wiki/Systemd
+
+		[mysqld_safe]
+		log-error=/var/log/mariadb/mariadb.log
+		pid-file=/var/run/mariadb/mariadb.pid
+
+		#
+		# include all files from the config directory
+		#
+		!includedir /etc/my.cnf.d
+		以上信息为my.cnf中的内容，将socket=/var/lib/mysql/mysql.sock 修改为  socket=/tmp/mysql.sock
+	5.重启mysql
+	  service mysql start
+	  Starting MySQL.                                            [  OK  ]
+	6.登录
+	  mysql -u root -p
+	  Enter password: 此处回车即可
+	Welcome to the MySQL monitor.  Commands end with ; or \g.
+	Your MySQL connection id is 1
+	Server version: 5.6.33 MySQL Community Server (GPL)
+
+	Copyright (c) 2000, 2016, Oracle and/or its affiliates. All rights reserved.
+
+	Oracle is a registered trademark of Oracle Corporation and/or its
+	affiliates. Other names may be trademarks of their respective
+	owners.
+
+	Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+	mysql> 
+	出现以上信息则显示已成功登录mysql
+五、修改mysql数据库root账户密码
+	use mysql;
+	update user set password=passworD("123456") where user='root';
+	flush privileges;
+	exit;
+	重新登录
+	mysql -u root -p
+	Enter password:此处输入123456即可
+	Welcome to the MySQL monitor.  Commands end with ; or \g.
+	Your MySQL connection id is 2
+	Server version: 5.6.33 MySQL Community Server (GPL)
+
+	Copyright (c) 2000, 2016, Oracle and/or its affiliates. All rights reserved.
+
+	Oracle is a registered trademark of Oracle Corporation and/or its
+	affiliates. Other names may be trademarks of their respective
+	owners.
+
+	Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+	mysql> 
+	出现以上信息则显示修改密码成功
+六、开启任何主机都能连接该服务器mysql
+	GRANT ALL PRIVILEGES ON *.* TO 'root'@'%'IDENTIFIED BY '123456'  WITH GRANT OPTION;
+	flush privileges;
+七、查看mysql相关信息
+	mysql> use mysql;
+	Reading table information for completion of table and column names
+	You can turn off this feature to get a quicker startup with -A
+
+	Database changed
+	mysql> SELECT User, Password ,Host From user;
+	+------+-------------------------------------------+-------------------------+
+	| User | Password                                  | Host                    |
+	+------+-------------------------------------------+-------------------------+
+	| root | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 | localhost               |
+	| root | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 | iz2ze8rwgdi66yyg99hikwz |
+	| root | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 | 127.0.0.1               |
+	| root | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 | ::1                     |
+	|      |                                           | localhost               |
+	|      |                                           | iz2ze8rwgdi66yyg99hikwz |
+	| root | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 | %                       |
+	+------+-------------------------------------------+-------------------------+
+八、查看mysql状态
+	[root@iz2ze8rwgdi66yyg99hikwz ~]# /etc/rc.d/init.d/mysql status
+    MySQL running (5747)  
+九、查看mysql端口号
+	mysql> show global variables like 'port';
+	+---------------+-------+
+	| Variable_name | Value |
+	+---------------+-------+
+	| port          | 3306  |
+	+---------------+-------+
+	1 row in set (0.00 sec)
+十、在阿里ECS实例管理中配置安全组规则，对外开放3306端口
+
+
+
+
+
+
+

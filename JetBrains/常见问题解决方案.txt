@@ -1,0 +1,23 @@
+1.解决idea不检查语法错误问题
+	场景：使用idea编程时有明显的语法错误却不显示，找了很多原因都没解决，语法高亮，设置语法检查等都试过，然并卵
+	解决：发现idea默认开启了省电模式（生无可恋...）关闭省电模式问题就ok了file--Power Save Mode
+2.进入idea界面后，为了保证以后打开的每一个项目都是用当前项目的设置模式，file--other settings
+3.很多用户会遇到开发工具转换为idea后电脑卡死的情况。
+	解决方法：修改安装目录下bin---idea64.exe.vmoptions文件内容
+	-Xms128m
+	-Xmx750m----------------------------------Xmx1024m主要就是修改的这一行
+	-XX:ReservedCodeCacheSize=240m
+	-XX:+UseConcMarkSweepGC
+	-XX:SoftRefLRUPolicyMSPerMB=50
+	-ea
+	-Dsun.io.useCanonCaches=false
+	-Djava.net.preferIPv4Stack=true
+	-XX:+HeapDumpOnOutOfMemoryError
+	-XX:-OmitStackTraceInFastThrow
+	重启完美解决
+	注意，重启后可能会遇到启动tomcat时报错:Application Server was not connected before run configuration stop, reason: Unable to ping server at localhost:1099
+	解决方法：打开配置tomcat界面，server界面下面有个VM options框，将上一步修改后的内容粘贴进去重启tomcat就ok了
+4.用IntelliJ 导入现有工程时，如果原来的工程中有spring，每次打开工程就会提示：Spring Configuration Check。开始不知道怎么回事，但工程不影响。
+	工程结构（Project Structure）有一个Facets 选项，可以设置各种框架。
+    Facets中则可以设置当前项目所用的框架，如Hibernate和Spring，如果是Web项目，也需要添加Web的Facets，这个界面中的显示和Modules中的很类似。如果想要通过idea做Hibernate的映射文件（.hbm）生成或jpa注解配置代码生成，则需要添加Hibernate配置，如果添加了Spring，则在Spring的xml中properties文件的占位符可以被自动替换为properties中已配置的值。
+    这个提示是把spring的配置文件由IntelliJ来管理，打Project Structure－>Facets 配置。添加spring配置文件的模块，将需要管理的配置文件添加上就ok了。

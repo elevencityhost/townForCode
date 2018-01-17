@@ -1,0 +1,92 @@
+1.从测试环境（58.16.65.169）将mysql的tar包远程复制到生产环境（58.16.65.179）
+	# scp root@58.16.65.169:/usr/local/mysql/Mysql-5.5.54-1.linux2.6.x86_64.rpm-bundle.tar /usr/local/mysql
+2.查看是否远程复制成功
+	# cd /usr/local/mysql
+	# ll
+  	查看后确认远程复制成功
+3.在当前文件夹解压该tar包
+	# tar -xvf Mysql-5.5.54-1.linux2.6.x86_64.rpm-bundle.tar
+4.解压完成，查看是否解压成功
+	# ll
+	-rw-r--r-- 1 root root  192542720 Jun  9 09:21 MySQL-5.5.54-1.linux2.6.x86_64.rpm-bundle.tar
+	-rw-r--r-- 1 7155 31415  17890481 Nov 29  2016 MySQL-client-5.5.54-1.linux2.6.x86_64.rpm
+	-rw-r--r-- 1 7155 31415   6530411 Nov 29  2016 MySQL-devel-5.5.54-1.linux2.6.x86_64.rpm
+	-rw-r--r-- 1 7155 31415  67758886 Nov 29  2016 MySQL-embedded-5.5.54-1.linux2.6.x86_64.rpm
+	-rw-r--r-- 1 7155 31415  51350277 Nov 29  2016 MySQL-server-5.5.54-1.linux2.6.x86_64.rpm
+	-rw-r--r-- 1 7155 31415   2044579 Nov 29  2016 MySQL-shared-5.5.54-1.linux2.6.x86_64.rpm
+	-rw-r--r-- 1 7155 31415   5179899 Nov 29  2016 MySQL-shared-compat-5.5.54-1.linux2.6.x86_64.rpm
+	-rw-r--r-- 1 7155 31415  41774656 Nov 29  2016 MySQL-test-5.5.54-1.linux2.6.x86_64.rpm
+5.安装service
+	# rpm -ivh MySQL-server-5.5.54-1.linux2.6.x86_64.rpm
+
+	报错.......
+
+	file /usr/share/mysql/charsets/README from install of MySQL-server-5.5.54-1.linux2.6.x86_64 conflicts with file from package mysql-libs-5.1.73-3.el6_5.x86_64
+	file /usr/share/mysql/charsets/Index.xml from install of MySQL-server-5.5.54-1.linux2.6.x86_64 conflicts with file from package mysql-libs-5.1.73-3.el6_5.x86_64
+	file /usr/share/mysql/charsets/armscii8.xml from install of MySQL-server-5.5.54-1.linux2.6.x86_64 conflicts with file from package mysql-libs-5.1.73-3.el6_5.x86_64
+	file /usr/share/mysql/charsets/ascii.xml from install of MySQL-server-5.5.54-1.linux2.6.x86_64 conflicts with file from package mysql-libs-5.1.73-3.el6_5.x86_64
+	file /usr/share/mysql/charsets/cp1250.xml from install of MySQL-server-5.5.54-1.linux2.6.x86_64 conflicts with file from package mysql-libs-5.1.73-3.el6_5.x86_64
+	file /usr/share/mysql/charsets/cp1251.xml from install of MySQL-server-5.5.54-1.linux2.6.x86_64 conflicts with file from package mysql-libs-5.1.73-3.el6_5.x86_64
+	file /usr/share/mysql/charsets/cp1256.xml from install of MySQL-server-5.5.54-1.linux2.6.x86_64 conflicts with file from package mysql-libs-5.1.73-3.el6_5.x86_64
+	file /usr/share/mysql/charsets/cp1257.xml from install of MySQL-server-5.5.54-1.linux2.6.x86_64 conflicts with file from package mysql-libs-5.1.73-3.el6_5.x86_64
+
+	原因：数据库已经安装了其它mysql-libs包导致与mysql数据库文件不兼容
+
+	解决：# yum remove mysql-libs
+6.安装client
+	# rpm -ivh MySQL-client-5.5.54-1.linux2.6.x86_64.rpm
+
+	安装完成！
+	warning: MySQL-client-5.5.54-1.linux2.6.x86_64.rpm: Header V3 DSA/SHA1 Signature, key ID 5072e1f5: NOKEY
+	Preparing...                ########################################### [100%]
+    1:MySQL-client           ########################################### [100%]
+7.启动mysql
+	# service mysql start
+	启动成功！
+	Starting MySQL.Logging to '/var/lib/mysql/iZ35u7lydy4Z.err'.. SUCCESS!
+8.登录
+	# mysql -uroot -p
+9.修改密码
+	# set password = password('123456')
+10.给予远程访问权限
+	# grant all privileges on *.* to 'root'@'%' identified by '123456';
+	Query OK, 0 rows affected (0.00 sec)
+10.修改mysql数据库默认编码
+	# show variables like 'character%'
+
+		+--------------------------+----------------------------+
+	| Variable_name            | Value                      |
+	+--------------------------+----------------------------+
+	| character_set_client     | utf8                       |
+	| character_set_connection | utf8                       |
+	| character_set_database   | latin1                     |
+	| character_set_filesystem | binary                     |
+	| character_set_results    | utf8                       |
+	| character_set_server     | latin1                     |
+	| character_set_system     | utf8                       |
+	| character_sets_dir       | /usr/share/mysql/charsets/ |
+	+--------------------------+----------------------------+
+	8 rows in set (0.00 sec)
+
+	修改步骤：
+	1> 找到mysql的配置文件，拷贝到etc目录下
+		# cp /usr/share/doc/MySQL-server-5.5.54/my-large.cnf /etc/my.cnf
+	2> 打开my.cnf修改编码
+
+		在[client]下增加default-character-set = utf8
+		在[mysqld]下增加default-character-set = utf8，同时加上init_connect = 'set names utf8'
+	3>重启mysql
+		# service mysql start
+	4>检查mysql数据库默认编码
+		# show variables like 'character%'
+	-------------------------------------------------------------
+	
+
+	查看mysql配置文件
+	# which mysqld
+		/usr/sbin/mysqld
+	# /usr/sbin/mysqld --verbose --help |grep -A 1 'Default options'
+		170614 10:22:01 [Note] /usr/sbin/mysqld (mysqld 5.5.54) starting as process 26031 ...
+		170614 10:22:01 [Note] Plugin 'FEDERATED' is disabled.
+		Default options are read from the following files in the given order:
+		/etc/my.cnf /etc/mysql/my.cnf /usr/etc/my.cnf ~/.my.cnf

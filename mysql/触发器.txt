@@ -1,0 +1,14 @@
+Mysql的触发器(trigger)：监视某种操作，并触发另一种操作。简要说：对表M的操作A触发了对表N的操作B.
+product_01
+product_02
+两张表，在product_01设计表，点击触发器，添加触发器。自定义触发器名称，选择After或者Before,插入、更新、删除三选一，在下面的定义中写sql语句，
+示例1：
+	begin
+     insert into product_02 (product_id,product_name,create_time) values(new.product_id,new.product_name,new.create_time);
+	end
+示例1含义是product_01表增加一条数据后将该条新记录同时插入product_02表中，new 关键字的含义是新记录用new表示，如果是修改的话，old表示旧记录，new表示新纪录。
+示例2：
+	begin
+    update product_02 set product_name = new.product_name,create_time=new.create_time where product_id = new.product_id;
+	end
+示例1含义是product_01表修改一条数据后将修改后的记录同步到product_02表中。

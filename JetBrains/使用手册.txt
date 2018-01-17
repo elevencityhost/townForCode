@@ -1,0 +1,11 @@
+1.从SVN导出项目后先配置jdk,然后File-settings--配置maven
+2.配置tomcat--------打开配置后切记server面板下面一定要点击一下红灯泡---fix，选择war包
+3.debug模式
+	debug模式下，F8是下一步，F9是跳到下一个断点，编辑器底部有debug模式，点击后会展示断点等相关信息。
+4.设置编辑器背景图片
+	ctrl+shift+A  set background image
+5.配置快捷键settings
+	https://www.cnblogs.com/wangmingshun/p/6427088.html
+6.maven使用
+	配置maven: file---settings---maven---配置maven的安装路径以及maven的配置文件conf---setting.xml以及maven的本地仓库
+	使用idea对maven项目打包：show tool bar,界面右侧有maven projects,打开后有lifecycle,首先clean,然后install,控制台会打印日志，显示将war包存储到哪个目录下，默认是存储在maven的本地仓库里面了
