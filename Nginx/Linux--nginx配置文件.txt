@@ -18,3 +18,13 @@ Nginx的安装
 Nginx包下载: http://nginx.org/en/download.html
 
 依赖包安装顺序依次为:openssl、zlib、pcre, 然后安装Nginx包.
+
+第一步： 下载安装所需包
+
+openssl-fips-2.0.2.tar.gz
+
+zlib-1.2.7.tar.gz
+
+pcre-8.21.tar.gz
+
+nginx-1.2.6.tar.gz
