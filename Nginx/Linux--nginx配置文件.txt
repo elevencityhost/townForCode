@@ -87,3 +87,28 @@ nginx-1.2.6.tar.gz
 　　
 
 至此Nginx的安装完成!
+
+第三步:检测是否安装成功
+
+[root@localhost nginx-1.2.6]# cd  /usr/local/nginx/sbin
+ 
+[root@localhost sbin]# ./nginx -t
+
+启动nginx
+
+[root@localhost sbin]# ./nginx
+ 启动nginx提示：error while loading shared libraries: libpcre.so.1: cannot open shared object file: No such file or directory，意思是找不到libpcre.so.1这个模块，而导致启动失败。
+
+如果是32位系统
+
+[root@lee ~]#  ln -s /usr/local/lib/libpcre.so.1 /lib
+如果是64位系统
+
+[root@lee ~]#  ln -s /usr/local/lib/libpcre.so.1 /lib64
+然后在启动nginx就OK了
+
+[root@lee ~]# /usr/local/nginx/sbin/nginx
+
+查看端口
+
+[root@localhost sbin]# netstat -ntlp
