@@ -28,3 +28,62 @@ zlib-1.2.7.tar.gz
 pcre-8.21.tar.gz
 
 nginx-1.2.6.tar.gz
+
+第二步:依次安装openssl-fips-2.0.2.tar.gz, zlib-1.2.7.tar.gz, pcre-8.21.tar.gz, nginx-1.2.6.tar.gz
+
+1.安装openssl-fips-2.0.2.tar.gz
+
+[root@localhost mrms]# tar -zxvf openssl-fips-2.0.2.tar.gz
+ 
+[root@localhost mrms]# cd openssl-fips-2.0.2
+ 
+[root@localhost openssl-fips-2.0.2]# ./config
+ 
+[root@localhost openssl-fips-2.0.2]# make
+ 
+[root@localhost openssl-fips-2.0.2]# make install
+　　
+
+2.安装zlib-1.2.7.tar.gz
+
+
+[root@localhost mrms]# tar -zxvf zlib-1.2.7.tar.gz
+ 
+[root@localhost mrms]# cd zlib-1.2.7
+ 
+[root@localhost zlib-1.2.7]# ./configure
+ 
+[root@localhost zlib-1.2.7]# make
+ 
+[root@localhost zlib-1.2.7]# make install
+　　
+
+3.安装pcre-8.21.tar.gz
+
+
+[root@localhost mrms]# tar -zxvf pcre-8.21.tar.gz
+ 
+[root@localhost mrms]# cd pcre-8.21
+ 
+[root@localhost pcre-8.21]# ./configure
+ 
+[root@localhost pcre-8.21]# make
+ 
+[root@localhost pcre-8.21]# make install
+　　
+
+ 4.安装 nginx-1.2.6.tar.gz
+
+
+[root@localhost mrms]# tar -zxvf nginx-1.2.6.tar.gz
+ 
+[root@localhost mrms]# cd nginx-1.2.6
+ 
+[root@localhost nginx-1.2.6]# ./configure --with-pcre=../pcre-8.21 --with-zlib=../zlib-1.2.7 --with-openssl=../openssl-fips-2.0.2
+ 
+[root@localhost nginx-1.2.6]# make
+ 
+[root@localhost nginx-1.2.6]# make install
+　　
+
+至此Nginx的安装完成!
