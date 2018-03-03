@@ -112,3 +112,5 @@ nginx-1.2.6.tar.gz
 查看端口
 
 [root@localhost sbin]# netstat -ntlp
+
+netstat -ntulp
