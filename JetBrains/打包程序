@@ -1,0 +1,13 @@
+使用idea将程序打成jar包并发布到阿里云服务器，使其在后台一直运行并不产生日志文件
+Project Structure ------ Artifacts ------ + From modules with dependencies ----apply---ok 
+build-----build artifacts build
+去输出路径找对应生成的jar包
+将jar包传输到服务器上后运行该jar
+有以下三种方法
+1.   java -jar xxx.jar
+     该方法只会在当前窗口运行，关闭窗口后停止运行
+2.   nohub java -jar xxx.jar
+     该方法会在服务器后台一直运行该程序，但是会产生一个日志文件 nohub.out
+3.   由于nohup.out没有什么价值，如果不处理的话，越积越大，占满磁盘空间，导致服务器奔溃，所以运行nohup 命令时，让其不产生此文件!
+     命令语法： nohup xxxx >/dev/null 2>&1&   
+     比如： nohup java -jar xxxx.jar >/dev/null 2>&1&
