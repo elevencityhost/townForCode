@@ -1,5 +1,5 @@
 使用idea将程序打成jar包并发布到阿里云服务器，使其在后台一直运行并不产生日志文件
-Project Structure ------ Artifacts ------ + From modules with dependencies ----apply---ok 
+Project Structure ------ Artifacts ------ + --- From modules with dependencies ----apply---ok 
 build-----build artifacts build
 去输出路径找对应生成的jar包
 将jar包传输到服务器上后运行该jar
