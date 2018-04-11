@@ -2,7 +2,7 @@
 Project Structure ------ Artifacts ------ + --- From modules with dependencies ----apply---ok 
 build-----build artifacts --- build
 去输出路径找对应生成的jar包
-将jar包传输到服务器上后运行该jar
+将 jar包传输到服务器上后运行该jar
 有以下三种方法
 1.   java -jar xxx.jar
      该方法只会在当前窗口运行，关闭窗口后停止运行
