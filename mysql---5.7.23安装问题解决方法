@@ -1,0 +1,31 @@
+安装mysql参考URL-----https://www.cnblogs.com/kanyun/p/8075414.html
+
+安装MySQL遇到的问题:
+1、Starting MySQL.2018-10-13T12:00:49.000518Z mysqld_safe error: log-error set to '/var/log/mariadb/mariadb.log', however file don't exists. Create writable for user 'mysql'.
+ ERROR! The server quit without updating PID file (/var/lib/mysql/localhost.localdomain.pid).
+
+ 解决方法：mkdir /var/log/mariadb 
+           touch /var/log/mariadb/mariadb.log 
+           chown -R mysql:mysql /var/log/mariadb/
+2、Starting MySQL.2018-10-13T12:05:27.345027Z mysqld_safe Directory '/var/lib/mysql' for UNIX socket file don't exists.
+ ERROR! The server quit without updating PID file (/var/lib/mysql/localhost.localdomain.pid).
+ 
+ 解决方法：mkdir /var/lib/mysql
+           chmod 777 /var/lib/mysql
+		   
+3、Starting MySQL... ERROR! The server quit without updating PID file (/var/lib/mysql/localhost.localdomain.pid).
+	解决方法：chown -R mysql:mysql /usr/local/mysql-5.7.23/data/
+	          chmod -R 755 /usr/local/mysql-5.7.23/data
+4、Starting MySQL... ERROR! The server quit without updating PID file (/var/lib/mysql/localhost.localdomain.pid).
+   解决方法：请在[mysqld]下设置这一行：datadir = /usr/local/mysql/data
+5、ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)
+	解决方法：find / -name mysql.sock
+	          ln -s /var/lib/mysql/mysql.sock /tmp/mysql.sock
+6、ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+	解决方法：1、mysql配置文件 /etc/profile  [mysqld]下面加一行 skip-grant-tables
+			  2、mysql -uroot -p 任意密码登录
+			  3、use mysql;
+			  4、update user set authentication_string = password('123456') where user = 'root';
+			  5、修改密码成功后退出mysql，新密码重新登录
+7、ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement.
+   解决方法：alter user user() identified by "123456";
